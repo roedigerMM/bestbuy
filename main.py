@@ -66,11 +66,36 @@ def start(store):
                     if quantity <= 0:
                         print("Quantity must be positive.")
                         continue
+                    if quantity > products[product_index].get_quantity():
+                        print("Not enough items in stock.")
+                        continue
                 except ValueError:
                     print("Please enter a valid quantity.")
                     continue
 
-                shopping_list.append((products[product_index], quantity))
+                #shopping_list.append((products[product_index], quantity))
+                #print("Product added to list!\n")
+                selected_product = products[product_index]
+
+                # Calculate already requested quantity for this product
+                already_requested = 0
+                for prod, qty in shopping_list:
+                    if prod == selected_product:
+                        already_requested += qty
+
+                # Combined validation
+                if already_requested + quantity > selected_product.get_quantity():
+                    print("Total requested quantity exceeds available stock.")
+                    continue
+
+                # Update shopping list
+                for i, (prod, qty) in enumerate(shopping_list):
+                    if prod == selected_product:
+                        shopping_list[i] = (prod, qty + quantity)
+                        break
+                else:
+                    shopping_list.append((selected_product, quantity))
+
                 print("Product added to list!\n")
 
             if shopping_list:
